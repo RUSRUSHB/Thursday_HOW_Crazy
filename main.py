@@ -24,14 +24,17 @@ keyword_data = data.iloc[:, 2]
 date_data = data.iloc[:, 0]
 datetime_data = pd.to_datetime(date_data)
 
-# plt.figure(figsize=(15, 6))
-plt.figure()
+plt.figure(figsize=(15, 6))
 # plt.subplot(121)
-# _plot_data(keyword_data, date_data, '原始关键词搜索指数')
+_plot_data(keyword_data, date_data, '原始关键词搜索指数')
+plt.savefig('output/原始关键词搜索指数.png')
+plt.show()
 
 # 进行平滑化处理
 import scipy.ndimage as nd
 keyword_data_smooth = nd.gaussian_filter1d(keyword_data, sigma=4)
+plt.figure(figsize=(15, 6))
 # plt.subplot(122)
 _plot_data(keyword_data_smooth, date_data, '平滑化后的关键词搜索指数')
+plt.savefig('output/平滑化后的关键词搜索指数.png')
 plt.show()
