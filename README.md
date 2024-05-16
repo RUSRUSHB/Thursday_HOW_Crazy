@@ -1,2 +1,3 @@
 # Thursday_HOW_Crazy
-Data analysis of KFC CrazyThursday.
+
+对疯狂星期四进行数据分析。这是写作与交流课程期末论文的数据分析部分。
