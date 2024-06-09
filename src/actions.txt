@@ -1,0 +1,79 @@
+import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+plt.rc("font",family='Microsoft YaHei')
+from scipy.stats import norm, kstest, anderson
+
+def plot_data(data, date_data, title):
+    plt.plot(date_data, data, marker='o', linestyle='-')
+    plt.title(title)
+    plt.xlabel('日期')
+    plt.ylabel('关键词搜索指数')
+    plt.xticks(rotation=45)
+    plt.gca().set_xticks(date_data.index[::100]) # x轴间隔：100天
+    plt.grid(True)
+    plt.tight_layout()
+    pass
+###
+max_index = keyword_data.idxmax()
+keyword_thursday_data = keyword_data[max_index%7::7]
+# 截取数据中周四的数据
+
+# 最大值
+print(keyword_data.max(), keyword_thursday_data.max())
+# 将周四的数据和其他数据（不含周四）的均值进行比较
+print(keyword_thursday_data.mean(), keyword_data.mean(), (keyword_data.mean()*7-keyword_thursday_data.mean())/6)
+
+# 绘制一周中七天分别的平均搜索指数
+plt.figure()
+days_of_week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+mean_values = []
+for i in range(7):
+    day_data = keyword_data[max_index%7+i-3::7]
+    mean_values.append(day_data.mean())
+plt.plot(days_of_week, mean_values, marker='o', linestyle='-')
+plt.title('一周中七天的平均搜索指数')
+plt.savefig('output/一周中七天的平均搜索指数.png')
+plt.show()
+###
+
+
+plt.figure()
+# plt.subplot(121)
+plot_data(keyword_data, date_data, '原始关键词搜索指数')
+plt.savefig('output/原始关键词搜索指数.png')
+plt.show()
+
+##
+# 傅里叶变换
+from scipy.fftpack import fft
+keyword_data_fft = fft(keyword_data)
+plt.figure()
+plt.plot(np.arange(len(keyword_data_fft))-len(keyword_data_fft)//2+1, np.abs(np.fft.fftshift(keyword_data_fft)))
+plt.title('关键词搜索指数的傅里叶变换')
+plt.savefig('output/关键词搜索指数的傅里叶变换.png')
+plt.show()
+##
+
+# 进行平滑化处理
+import scipy.ndimage as nd
+keyword_data_smooth = nd.gaussian_filter1d(keyword_data, sigma=4)
+
+# 保存平滑化后的数据
+data_smooth = data.copy()
+data_smooth.iloc[:, 2] = keyword_data_smooth
+data_smooth.to_csv("output/疯狂星期四-抖音关键词搜索指数_平滑化.csv", index=False)
+
+plt.figure()
+# plt.subplot(122)
+plot_data(keyword_data_smooth, date_data, '平滑化后的关键词搜索指数')
+plt.savefig('output/平滑化后的关键词搜索指数.png')
+plt.show()
+
+keyword_data_diff = keyword_data-keyword_data_smooth
+plt.figure()
+# plt.subplot(122)
+plot_data(keyword_data_diff, date_data, '周期性分量')
+plt.savefig('output/周期性分量.png')
+plt.show()
