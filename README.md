@@ -4,4 +4,4 @@
 
 Don't read the code. It's a mess.
 
-> 报告也写得挺烂的……创这个repo只是因为整了活想留个档
+> 创这个repo只是因为整了活想留个档
